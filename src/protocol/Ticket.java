@@ -1,8 +1,9 @@
-package server;
+package protocol;
 
-import protocol.TicketStatus;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 
 public class Ticket implements Serializable {
 
