@@ -2,9 +2,12 @@ package protocol;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
-
-
+/**
+ * Representerer en støttehenvendelse og dens tilstand i systemet.
+ * Tilstandsoverganger kalles fra TicketStore under synchronized-blokk.
+ *
+ * @author Ahmed
+ */
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -17,6 +20,12 @@ public class Ticket implements Serializable {
     private String assignedAgentId;
     private LocalDateTime updatedAt;
 
+    /**
+     * Oppretter en ny henvendelse med tilstand PENDING.
+     *
+     * @param id          unik identifikator for henvendelsen
+     * @param description beskrivelse av problemet
+     */
     public Ticket(String id, String description) {
         this.id = id;
         this.description = description;
@@ -25,8 +34,12 @@ public class Ticket implements Serializable {
         this.updatedAt = this.createdAt;
     }
 
-    // Gyldige tilstandsoverganger - kalles fra TicketStore under synchronized-blokk
-
+    /**
+     * Tildeler henvendelsen til en agent. Krever tilstand PENDING.
+     *
+     * @param agentId ID til agenten som henter henvendelsen
+     * @throws IllegalStateException hvis tilstanden ikke er PENDING
+     */
     public void assign(String agentId) {
         if (status != TicketStatus.PENDING) {
             throw new IllegalStateException(
@@ -38,6 +51,12 @@ public class Ticket implements Serializable {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * Markerer henvendelsen som fullført. Krever tilstand ASSIGNED og riktig agent.
+     *
+     * @param agentId ID til agenten som fullfører henvendelsen
+     * @throws IllegalStateException hvis tilstanden ikke er ASSIGNED eller feil agent
+     */
     public void complete(String agentId) {
         if (status != TicketStatus.ASSIGNED) {
             throw new IllegalStateException(
@@ -53,6 +72,11 @@ public class Ticket implements Serializable {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * Kansellerer henvendelsen. Krever tilstand PENDING.
+     *
+     * @throws IllegalStateException hvis tilstanden ikke er PENDING
+     */
     public void cancel() {
         if (status != TicketStatus.PENDING) {
             throw new IllegalStateException(
@@ -63,12 +87,22 @@ public class Ticket implements Serializable {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters
+    /** @return unik identifikator for henvendelsen */
     public String getId()              { return id; }
+
+    /** @return beskrivelse av problemet */
     public String getDescription()     { return description; }
+
+    /** @return nåværende tilstand */
     public TicketStatus getStatus()    { return status; }
+
+    /** @return ID til tildelt agent, eller null hvis ikke tildelt */
     public String getAssignedAgentId() { return assignedAgentId; }
+
+    /** @return tidspunkt henvendelsen ble opprettet */
     public LocalDateTime getCreatedAt(){ return createdAt; }
+
+    /** @return tidspunkt for siste tilstandsendring */
     public LocalDateTime getUpdatedAt(){ return updatedAt; }
 
     @Override
