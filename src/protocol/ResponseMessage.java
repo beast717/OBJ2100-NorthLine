@@ -1,5 +1,6 @@
 package protocol;
 
+import protocol.Ticket;
 import java.io.Serializable;
 
 /**
