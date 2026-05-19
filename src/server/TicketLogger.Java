@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Trådsikker logger for ticket-hendelser.
@@ -34,31 +35,34 @@ public class TicketLogger {
     /**
      * Logger at en ticket ble hentet og tildelt en supportagent.
      *
-     * @param ticketId ID til den tildelte ticketen
-     * @param actorId  ID til agenten som hentet ticketen
+     * @param ticketId    ID til den tildelte ticketen
+     * @param actorId     ID til agenten som hentet ticketen
+     * @param description beskrivelse av problemet i ticketen
      */
-    public static void ticketAssigned(String ticketId, String actorId) {
-        log("TICKET_ASSIGNED", ticketId, actorId, "");
+    public static void ticketAssigned(String ticketId, String actorId, String description) {
+        log("TICKET_ASSIGNED", ticketId, actorId, description);
     }
 
     /**
      * Logger at en ticket ble kansellert av en registrator.
      *
-     * @param ticketId ID til den kansellerte ticketen
-     * @param actorId  ID til registratoren som kansellerte ticketen
+     * @param ticketId    ID til den kansellerte ticketen
+     * @param actorId     ID til registratoren som kansellerte ticketen
+     * @param description beskrivelse av problemet i ticketen
      */
-    public static void ticketCancelled(String ticketId, String actorId) {
-        log("TICKET_CANCELLED", ticketId, actorId, "");
+    public static void ticketCancelled(String ticketId, String actorId, String description) {
+        log("TICKET_CANCELLED", ticketId, actorId, description);
     }
 
     /**
      * Logger at en ticket ble fullført av en supportagent.
      *
-     * @param ticketId ID til den fullførte ticketen
-     * @param actorId  ID til agenten som fullførte ticketen
+     * @param ticketId    ID til den fullførte ticketen
+     * @param actorId     ID til agenten som fullførte ticketen
+     * @param description beskrivelse av problemet i ticketen
      */
-    public static void ticketCompleted(String ticketId, String actorId) {
-        log("TICKET_COMPLETED", ticketId, actorId, "");
+    public static void ticketCompleted(String ticketId, String actorId, String description) {
+        log("TICKET_COMPLETED", ticketId, actorId, description);
     }
 
     /**
@@ -87,6 +91,9 @@ public class TicketLogger {
         }
     }
 
+    private static final DateTimeFormatter FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     /**
      * Formaterer en loggoppføring med tidsstempel og alle relevante felt.
      *
@@ -98,10 +105,8 @@ public class TicketLogger {
             String actorId,
             String extraInfo
     ) {
-        return LocalDateTime.now() + " | " +
-               "event=" + eventType + " | " +
-               "ticketId=" + ticketId + " | " +
-               "actor=" + actorId + " | " +
-               "info=" + extraInfo;
+        String timestamp = LocalDateTime.now().format(FORMATTER);
+        return String.format("[%s] | event = %-16s | ticketId = %-10s | actor = %-20s | info = %s",
+                timestamp, eventType, ticketId, actorId, extraInfo);
     }
 }
