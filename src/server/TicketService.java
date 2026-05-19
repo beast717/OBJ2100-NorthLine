@@ -49,7 +49,7 @@ public class TicketService {
             } else  {
 
                 Ticket ticket = result.get();
-                TicketLogger.ticketAssigned(ticket.getId(), req.getSenderId());
+                TicketLogger.ticketAssigned(ticket.getId(), req.getSenderId(), ticket.getDescription());
                 return new ResponseMessage(ResponseStatus.OK, "Henvendelse tildelt", ticket);
 
             }
@@ -61,7 +61,9 @@ public class TicketService {
             boolean success =  ticStore.cancel(req.getTicketId());
 
             if (success) {
-                TicketLogger.ticketCancelled(req.getTicketId(), req.getSenderId());
+                String description = ticStore.findById(req.getTicketId())
+                        .map(Ticket::getDescription).orElse("");
+                TicketLogger.ticketCancelled(req.getTicketId(), req.getSenderId(), description);
                 return new ResponseMessage(ResponseStatus.OK, "Ticket kansellert", null);
             } else {
             
@@ -79,7 +81,9 @@ public class TicketService {
             boolean success = ticStore.complete(req.getTicketId(), req.getSenderId());
 
             if (success) {
-                TicketLogger.ticketCompleted(req.getTicketId(), req.getSenderId());
+                String description = ticStore.findById(req.getTicketId())
+                        .map(Ticket::getDescription).orElse("");
+                TicketLogger.ticketCompleted(req.getTicketId(), req.getSenderId(), description);
                 return new ResponseMessage(ResponseStatus.OK, "Ticket fullført", null);
             } else {
                 if (ticStore.findById(req.getTicketId()).isEmpty()) {
