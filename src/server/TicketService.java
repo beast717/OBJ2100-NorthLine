@@ -4,20 +4,16 @@ import protocol.RequestMessage;
 import protocol.ResponseMessage;
 import protocol.ResponseStatus;
 import protocol.Ticket;
-import protocol.Operation; 
 import java.util.Optional;
 
 
 public class TicketService {
 
-    private final TicketStore ticStore; 
-    private final Logger log; 
-   
-    // KONSTRUKTØR
-    public TicketService(TicketStore ticStore, Logger log ) {
-        this.ticStore = ticStore;
-        this.log = log;
+    private final TicketStore ticStore;
 
+    // KONSTRUKTØR
+    public TicketService(TicketStore ticStore) {
+        this.ticStore = ticStore;
     }
 
     // Hovedmetoden — ruter forespørselen til riktig hjelpemetode
@@ -40,7 +36,7 @@ public class TicketService {
         // Registrer Ticket, skriver i log og returnerer som registrert. 
         private ResponseMessage handleRegister(RequestMessage req) {
             Ticket ticket = ticStore.createTicket(req.getDescription());
-            log.log("CREATED", ticket.getId(), req.getSenderId(), ticket.getDescription());
+            TicketLogger.ticketCreated(ticket.getId(), req.getSenderId(), ticket.getDescription());
             return new ResponseMessage(ResponseStatus.OK, "Ticket registrert", ticket);
         }
 
@@ -53,7 +49,7 @@ public class TicketService {
             } else  {
 
                 Ticket ticket = result.get();
-                log.log("ASSIGNED", ticket.getId(), req.getSenderId(), null);
+                TicketLogger.ticketAssigned(ticket.getId(), req.getSenderId());
                 return new ResponseMessage(ResponseStatus.OK, "Henvendelse tildelt", ticket);
 
             }
@@ -65,7 +61,7 @@ public class TicketService {
             boolean success =  ticStore.cancel(req.getTicketId());
 
             if (success) {
-                log.log("CANCELLED", req.getTicketId(), req.getSenderId(), null);
+                TicketLogger.ticketCancelled(req.getTicketId(), req.getSenderId());
                 return new ResponseMessage(ResponseStatus.OK, "Ticket kansellert", null);
             } else {
             
@@ -83,7 +79,7 @@ public class TicketService {
             boolean success = ticStore.complete(req.getTicketId(), req.getSenderId());
 
             if (success) {
-                log.log("COMPLETED", req.getTicketId(), req.getSenderId(), null);
+                TicketLogger.ticketCompleted(req.getTicketId(), req.getSenderId());
                 return new ResponseMessage(ResponseStatus.OK, "Ticket fullført", null);
             } else {
                 if (ticStore.findById(req.getTicketId()).isEmpty()) {

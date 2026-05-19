@@ -15,21 +15,16 @@ public class ClientHandler implements Runnable {
 
     private final Socket clientSocket;
     private final TicketService ticService;
-    private final Logger log;
 
-    public ClientHandler(Socket clientSocket, TicketService ticService, Logger log) {
+    public ClientHandler(Socket clientSocket, TicketService ticService) {
         this.clientSocket = clientSocket;
         this.ticService = ticService;
-        this.log = log;
     }
   
     // Hovedløkken for å håndtere klientforespørsler
     @Override
     public void run() {
         
-        // Logg tilkobling
-        String clientAddress = clientSocket.getRemoteSocketAddress().toString();
-        log.log("CLIENT_CONNECTED", null, clientAddress, null);
      
         // Bruk try-with-resources for å sikre at strømmer og socket lukkes riktig
         try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -72,8 +67,6 @@ public class ClientHandler implements Runnable {
        
             // Uansett hvordan løkken avsluttes, logg at klienten har koblet fra og lukk socketen
         } finally {
-
-            log.log("CLIENT_DISCONNECTED", null, clientAddress, null);
 
             try {
                 clientSocket.close();

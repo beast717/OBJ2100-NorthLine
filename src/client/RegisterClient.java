@@ -4,7 +4,7 @@ import protocol.Operation;
 import protocol.RequestMessage;
 import protocol.ResponseMessage;
 import protocol.ResponseStatus;
-import server.Ticket;
+import protocol.Ticket;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

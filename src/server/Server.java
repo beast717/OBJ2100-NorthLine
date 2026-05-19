@@ -12,15 +12,19 @@ import java.io.IOException;
  */
 public class Server {
     public static void main(String[] args) throws IOException {
-        // Åpner TCP port og venter på klienter
-        ServerSocket serverSocket = new ServerSocket(5000);
-        // Evig løkke. Serveren skal aldri stoppe
-        while (true) {
-            // Venter på at en klient skal koble seg til, returnerer en Socket
-            Socket clientSocket = serverSocket.accept();
-            // Oppretter en ClientHandler for hver klient og starter en ny tråd for å håndtere kommunikasjonen
-            ClientHandler handler = new ClientHandler(clientSocket);
-            new Thread(handler).start();
+        TicketStore store = new TicketStore();
+        TicketService service = new TicketService(store);
+
+        // Åpner TCP port og venter på klienter — lukkes automatisk når serveren stoppes
+        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+            // Evig løkke. Serveren skal aldri stoppe
+            while (true) {
+                // Venter på at en klient skal koble seg til, returnerer en Socket
+                Socket clientSocket = serverSocket.accept();
+                // Oppretter en ClientHandler for hver klient og starter en ny tråd for å håndtere kommunikasjonen
+                ClientHandler handler = new ClientHandler(clientSocket, service);
+                new Thread(handler).start();
+            }
         }
     }
 }
