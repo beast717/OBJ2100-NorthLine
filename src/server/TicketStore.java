@@ -10,7 +10,6 @@ import java.util.Optional;
 public class TicketStore {
 
     private final Map<String, Ticket> henvendelser = new LinkedHashMap<>();
-
     private int nextId = 1;
 
      
@@ -57,7 +56,7 @@ public class TicketStore {
         }
     }
 
-    
+    // Hjelpemetode for å tømme alle tickets, brukes i tester
     public synchronized boolean complete(String id, String agentId) {
         Optional<Ticket> found = findById(id);
         if (found.isEmpty()) {
