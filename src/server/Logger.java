@@ -24,6 +24,7 @@ public class Logger {
         return instance;
     }
 
+     // Logg en hendelse med tidsstempel, type, ticket-id, aktør og detaljer
       public synchronized void log(String event, String ticketId, String actorId, String details) {
         try {
             String line = Instant.now() + "\t" + event + "\t"
@@ -37,7 +38,8 @@ public class Logger {
             System.err.println("Logging feilet: " + e.getMessage());
         }
     }
-
+    
+    //  Lukk loggeren når serveren avsluttes
     public synchronized void close() {
         try {
             writer.close();
