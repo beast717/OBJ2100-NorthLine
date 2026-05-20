@@ -11,7 +11,6 @@ import java.net.Socket;
 
 /**
  * Kjører på en egen tråd og håndterer all kommunikasjon med én klient.
- * <p>
  * Leser {@link RequestMessage}-objekter fra socketens inn-strøm, sender
  * dem videre til {@link TicketService}, og skriver {@link ResponseMessage}
  * tilbake. Tråden lever til klienten kobler fra eller en I/O-feil oppstår.
@@ -26,7 +25,6 @@ public class ClientHandler implements Runnable {
 
     /**
      * Oppretter en handler for en nylig akseptert klient-tilkobling.
-     *
      * @param clientSocket socketen koblet til klienten
      * @param ticService   tjenesten som skal behandle forespørslene
      */

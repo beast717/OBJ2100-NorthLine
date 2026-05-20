@@ -8,11 +8,9 @@ import java.util.Optional;
 
 /**
  * Applikasjonslogikken som behandler innkommende forespørsler fra klienter.
- * <p>
  * Tar imot en {@link RequestMessage}, utfører riktig operasjon mot
  * {@link TicketStore}, logger handlingen via {@link TicketLogger}, og
  * returnerer en {@link ResponseMessage} med resultatet.
- *
  * @author Guleed
  */
 public class TicketService {
@@ -21,7 +19,6 @@ public class TicketService {
 
     /**
      * Oppretter en ny TicketService som opererer mot det angitte lageret.
-     *
      * @param ticStore lageret som tickets leses fra og skrives til
      */
     public TicketService(TicketStore ticStore) {
@@ -53,7 +50,6 @@ public class TicketService {
     /**
      * Registrerer en ny ticket basert på beskrivelsen i forespørselen
      * og logger opprettelsen.
-     *
      * @param req forespørsel av typen REGISTER
      * @return OK-svar med den nye ticketen
      */
@@ -65,7 +61,6 @@ public class TicketService {
 
     /**
      * Henter neste ledige ticket og tildeler den til avsenderen.
-     *
      * @param req forespørsel av typen FETCH
      * @return OK-svar med tildelt ticket, eller {@code ERROR_NO_TICKETS}
      *         hvis det ikke finnes ledige henvendelser
@@ -85,7 +80,6 @@ public class TicketService {
     /**
      * Kansellerer en eksisterende ticket. Skiller mellom "finnes ikke"
      * og "feil tilstand" i feilsvaret.
-     *
      * @param req forespørsel av typen CANCEL
      * @return OK ved suksess, ellers {@code ERROR_NOT_FOUND} eller
      *         {@code ERROR_INVALID_STATE}
@@ -110,7 +104,6 @@ public class TicketService {
     /**
      * Markerer en ticket som fullført. Kun agenten som har ticketen
      * tildelt kan fullføre den.
-     *
      * @param req forespørsel av typen COMPLETE
      * @return OK ved suksess, ellers {@code ERROR_NOT_FOUND} eller
      *         {@code ERROR_INVALID_STATE}

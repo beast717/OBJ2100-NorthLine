@@ -8,7 +8,6 @@ import java.util.Optional;
 
 /**
  * Trådsikkert lager for alle henvendelser (tickets) på serveren.
- * <p>
  * Alle metoder som endrer eller leser tilstand er {@code synchronized}
  * slik at flere {@link ClientHandler}-tråder kan operere samtidig uten
  * å skape inkonsistente data.
@@ -16,13 +15,15 @@ import java.util.Optional;
  * @author Guleed
  */
 public class TicketStore {
-
+    /**
+     * Lageret for alle henvendelser, indeksert på ticket-ID. Bruker LinkedHashMap
+     * for å bevare innsettingsrekkefølgen, noe som gjør det enklere å finne neste ledige ticket.
+     */
     private final Map<String, Ticket> henvendelser = new LinkedHashMap<>();
     private int nextId = 1;
 
     /**
      * Oppretter en ny ticket med en unik ID og status {@code PENDING}.
-     *
      * @param description fritekstbeskrivelse av henvendelsen fra klienten
      * @return den nyopprettede ticketen
      */
@@ -35,8 +36,7 @@ public class TicketStore {
 
     /**
      * Legger til en eksisterende ticket direkte i lageret.
-     * Hovedsakelig brukt fra tester for å sette opp kjent tilstand.
-     *
+     * Hovedsakelig brukt fra tester for å sette opp kjent tilstand
      * @param ticket ticketen som skal legges til
      */
     public synchronized void add(Ticket ticket) {
@@ -44,8 +44,7 @@ public class TicketStore {
     }
 
     /**
-     * Slår opp en ticket basert på ID.
-     *
+     * Slår opp en ticket basert på ID
      * @param id ticket-ID å lete etter
      * @return {@link Optional} med ticketen hvis funnet, ellers tom
      */
@@ -56,7 +55,6 @@ public class TicketStore {
     /**
      * Finner den første ledige ticketen (status {@code PENDING}) og
      * tildeler den til den angitte agenten.
-     *
      * @param agentId ID-en til agenten som skal få ticketen
      * @return {@link Optional} med den tildelte ticketen, eller tom hvis
      *         det ikke finnes noen ledige
@@ -93,8 +91,7 @@ public class TicketStore {
 
     /**
      * Markerer en ticket som fullført. Kun agenten som har ticketen
-     * tildelt kan fullføre den.
-     *
+     * tildelt kan fullføre den
      * @param id      ID-en til ticketen
      * @param agentId ID-en til agenten som forsøker å fullføre
      * @return {@code true} hvis fullføringen lyktes, ellers {@code false}
